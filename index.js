@@ -52,6 +52,7 @@ async function run() {
   try {
     const database = client.db("TaskAppDB");
     const usersCollection = database.collection("users");
+    const tasksCollection = database.collection("Tasks");
 
     // save or update a user in db
     app.post("/users/:email", async (req, res) => {
@@ -98,6 +99,22 @@ async function run() {
       } catch (err) {
         res.status(500).send(err);
       }
+    });
+
+    // save a Task data in db
+    app.post("/tasks", verifyToken, async (req, res) => {
+      const task = req.body;
+      const result = await tasksCollection.insertOne({
+        ...task,
+        timestamp: Date.now(),
+      });
+      res.send(result);
+    });
+
+    // get all tasks from db
+    app.get("/tasks", async (req, res) => {
+      const result = await tasksCollection.find().toArray();
+      res.send(result);
     });
 
     // Get All Users
