@@ -231,18 +231,40 @@ async function run() {
         if (result.modifiedCount > 0) {
           res.send({ success: true, message: "Task updated successfully" });
         } else {
-          res
-            .status(404)
-            .send({
-              success: false,
-              message: "Task not found or no changes made",
-            });
+          res.status(404).send({
+            success: false,
+            message: "Task not found or no changes made",
+          });
         }
       } catch (error) {
         console.error(error);
         res
           .status(500)
           .send({ success: false, message: "Failed to update task" });
+      }
+    });
+
+    // Update Task order
+    app.put("/tasks/update", async (req, res) => {
+      try {
+        const { updatedTasks } = req.body;
+
+        // Update each task in database
+        const bulkOperations = updatedTasks.flatMap((tasks, category) =>
+          tasks.map((task, index) => ({
+            updateOne: {
+              filter: { _id: task._id },
+              update: { category: category, order: index },
+            },
+          }))
+        );
+
+        await Task.bulkWrite(bulkOperations);
+
+        res.status(200).json({ message: "Tasks updated successfully" });
+      } catch (error) {
+        console.error("Error updating tasks:", error);
+        res.status(500).json({ message: "Internal server error" });
       }
     });
 
