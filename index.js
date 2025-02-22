@@ -125,7 +125,7 @@ async function run() {
     });
 
     // My To-Do Task get from database
-    app.get("/my-task", async (req, res) => {
+    app.get("/tasks", async (req, res) => {
       try {
         const { email } = req.query;
         if (!email) {
@@ -141,6 +141,20 @@ async function run() {
       } catch (error) {
         console.error(error);
         res.status(500).send({ error: "Failed to fetch classes" });
+      }
+    });
+
+    // Delete Task From Database
+    app.delete("/tasks/:id", async (req, res) => {
+      const { id } = req.params;
+      try {
+        const result = await tasksCollection.deleteOne({
+          _id: new ObjectId(id),
+        });
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to delete class" });
       }
     });
 
