@@ -124,6 +124,26 @@ async function run() {
       res.send(result);
     });
 
+    // My To-Do Task get from database
+    app.get("/my-task", async (req, res) => {
+      try {
+        const { email } = req.query;
+        if (!email) {
+          return res
+            .status(400)
+            .send({ error: "Email query parameter is required" });
+        }
+        const result = await tasksCollection
+          .find({ "User.email": email })
+          .toArray();
+
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: "Failed to fetch classes" });
+      }
+    });
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log(
