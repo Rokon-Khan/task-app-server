@@ -158,6 +158,94 @@ async function run() {
       }
     });
 
+    // Get Task Detail with ID
+    app.get("/tasks/:id", async (req, res) => {
+      const { id } = req.params;
+
+      // Validate ID
+      if (!ObjectId.isValid(id)) {
+        return res
+          .status(400)
+          .send({ success: false, message: "Invalid class ID" });
+      }
+
+      try {
+        const taskData = await tasksCollection.findOne({
+          _id: new ObjectId(id),
+        });
+
+        if (!taskData) {
+          return res
+            .status(404)
+            .send({ success: false, message: "Class not found" });
+        }
+
+        res.send(taskData);
+      } catch (error) {
+        console.error("Error fetching class data:", error);
+        res
+          .status(500)
+          .send({ success: false, message: "Failed to fetch class" });
+      }
+    });
+
+    // Update Task From Database
+    // app.put("/tasks/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const updatedTask = req.body;
+
+    //   try {
+    //     const result = await tasksCollection.updateOne(
+    //       { _id: new ObjectId(id) },
+    //       { $set: updatedTask }
+    //     );
+    //     if (result.modifiedCount > 0) {
+    //       res.send({ success: true, message: "Task updated successfully" });
+    //     } else {
+    //       res.status(404).send({ success: false, message: "Task not found" });
+    //     }
+    //   } catch (error) {
+    //     console.error(error);
+    //     res
+    //       .status(500)
+    //       .send({ success: false, message: "Failed to update Task" });
+    //   }
+    // });
+
+    app.put("/tasks/:id", async (req, res) => {
+      const { id } = req.params;
+      const updatedTask = req.body;
+
+      try {
+        if (!ObjectId.isValid(id)) {
+          return res
+            .status(400)
+            .send({ success: false, message: "Invalid ID format" });
+        }
+
+        const result = await tasksCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updatedTask }
+        );
+
+        if (result.modifiedCount > 0) {
+          res.send({ success: true, message: "Task updated successfully" });
+        } else {
+          res
+            .status(404)
+            .send({
+              success: false,
+              message: "Task not found or no changes made",
+            });
+        }
+      } catch (error) {
+        console.error(error);
+        res
+          .status(500)
+          .send({ success: false, message: "Failed to update task" });
+      }
+    });
+
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
     console.log(
