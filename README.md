@@ -4,7 +4,7 @@ Here’s a well-structured **README** file for your **SCIC-10 Job Task Assignmen
 
 # SCIC-10 Job Task Assignment - Task Management App  
 
-🚀 **Live Demo**: [Task Management App](https://task-management-app.surge.sh)  
+🚀 **Live Demo**: [Task Management App](https://task-management-web-app.surge.sh)  
 
 ## 📌 Introduction  
 **EduManagement** is a comprehensive **Class Management System** designed to streamline educational workflows for teachers and students. This web-based platform offers an intuitive interface for managing classes, assignments, and student progress while providing real-time updates and secure authentication.  
